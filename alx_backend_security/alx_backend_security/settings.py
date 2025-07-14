@@ -40,6 +40,22 @@ INSTALLED_APPS = [
     "ip_tracking"
 ]
 
+IP_GEOLOCATION_SETTINGS = {
+    'BACKEND': 'django_ip_geolocation.backends.IP2LocationCom',
+    'BACKEND_API_KEY': 'your_api_key_here',  # Obtain from ip2location.com
+    'ENABLE_REQUEST_HOOK': True,
+    'ENABLE_RESPONSE_HOOK': False,
+    'ENABLE_COOKIE': False,
+    'USER_CONSENT_VALIDATOR': None,
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
