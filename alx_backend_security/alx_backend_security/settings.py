@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,18 +43,32 @@ INSTALLED_APPS = [
 
 IP_GEOLOCATION_SETTINGS = {
     'BACKEND': 'django_ip_geolocation.backends.IP2LocationCom',
-    'BACKEND_API_KEY': 'your_api_key_here',  # Obtain from ip2location.com
+    'BACKEND_API_KEY': '70791DEC9474651CDB8C08F2C3C02795',  # Obtain from ip2location.com
     'ENABLE_REQUEST_HOOK': True,
     'ENABLE_RESPONSE_HOOK': False,
     'ENABLE_COOKIE': False,
     'USER_CONSENT_VALIDATOR': None,
 }
 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'unique-snowflake',
     }
+}
+
+CELERY_BEAT_SCHEDULE = {
+    'detect-anomalies-every-hour': {
+        'task': 'ip_tracking.tasks.detect_anomalies',
+        'schedule': crontab(minute=0, hour='*'),
+    },
 }
 
 MIDDLEWARE = [
